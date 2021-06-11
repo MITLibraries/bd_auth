@@ -5,3 +5,16 @@
 - `python3-saml` package requires `libxmlsec1`.
   Suggest `brew install libxmlsec1` on macOS
 - possibly also needs `pkg-config` (not sure)
+
+## Required ENV in production
+
+`FLASK_APP` = bdauth
+`FLASK_ENV` = production
+`IDP_CERT` = standard IST IDP setting
+`IDP_ENTITY_ID` = standard IST IDP setting
+`IDP_SSO_URL` = standard IST IDP setting
+`SECRET_KEY` = generate a long random string. Used for session security
+`SP_ACS_URL` = route in this app that handles the response from IDP
+`SP_CERT` = obtained from self signed cert generated for this app
+`SP_ENTITY_ID` = domain name of app + /saml
+`SP_KEY` = obtained from self signed key generated for this app
