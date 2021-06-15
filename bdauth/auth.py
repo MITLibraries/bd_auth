@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from functools import wraps
 from urllib.parse import urljoin, urlparse
@@ -7,6 +8,8 @@ from flask import (
     Blueprint, current_app, make_response, redirect, request, session, url_for
 )
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
+
+logging.basicConfig(level=logging.INFO)
 
 
 def is_safe_url(target):
@@ -36,7 +39,9 @@ def load_saml_settings():
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if (current_app.config['ENV'] != 'development' and
+        if (current_app.config['ENV'] != 'production'):
+            session['samlKerbid'] = current_app.config['FAKE_USER']
+        if (current_app.config['ENV'] == 'production' and
                 'samlSessionIndex' not in session):
             return redirect(url_for('auth.saml', sso=True, next=request.url))
         return f(*args, **kwargs)
@@ -74,10 +79,19 @@ def saml():
     elif 'acs' in request.args:
         auth.process_response()
         errors = auth.get_errors()
+        logging.info('acs')
+
         if not auth.is_authenticated():
             # TODO: return something helpful to the user
             pass
         if len(errors) == 0:
+            user_info = auth.get_attributes()
+            logging.info(user_info)
+
+            kerb = auth.get_attribute(current_app.config['URN_UID'])[0]
+            logging.info(kerb)
+
+            session['samlKerbid'] = kerb
             session['samlNameId'] = auth.get_nameid()
             session['samlSessionIndex'] = auth.get_session_index()
             return redirect(request.form['RelayState'])
