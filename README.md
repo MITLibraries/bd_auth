@@ -9,6 +9,8 @@
 
 ## Required ENV in production
 
+`BD_KEY` = the supplied public key, base64encoded, for borrowdirect
+
 `BD_URL` = the borrowdirect URL
 
 `FLASK_APP` = bdauth
