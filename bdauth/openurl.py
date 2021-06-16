@@ -1,9 +1,16 @@
+import base64
+import logging
 import urllib.parse
-
+from datetime import datetime
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
 from flask import Blueprint, redirect, request, session
 from flask.globals import current_app
 
 from bdauth.auth import login_required
+
+logging.basicConfig(level=logging.INFO)
+
 
 bp = Blueprint('openurl', __name__, url_prefix='/openurl')
 
@@ -19,8 +26,22 @@ def construct_url():
 
 
 def pi_encryptor():
-    # currently passes through with no encryption
-    return '&PI=' + session['samlKerbid']
+    if current_app.config['ENV'] == 'testing':
+        return '&PI=' + session['samlKerbid']
+
+    decoded_key = base64.standard_b64decode(current_app.config['BD_KEY'])
+    pubkey = RSA.importKey(decoded_key)
+    logging.info(f"pubkey: {pubkey}")
+
+    now = datetime.utcnow().strftime("%Y%m%d %H%M%S")
+    plaintext = f"{session['samlKerbid']}|{now}"
+    logging.info(f"plaintext: {plaintext}")
+
+    cipher = Cipher_PKCS1_v1_5.new(pubkey)
+    e = cipher.encrypt(plaintext.encode('utf-8'))
+    logging.info(f"encrypted: {e}")
+
+    return '&PI=' + base64.urlsafe_b64encode(e).decode('utf-8')
 
 
 def query_formatter(args):
