@@ -3,12 +3,12 @@ import os
 
 from flask import Flask
 
-from bdauth import auth, debug
-from bdauth.auth import login_required
+from bdauth import auth, debug, openurl
 
 app = Flask(__name__, instance_relative_config=True)
 app.register_blueprint(auth.bp)
 app.register_blueprint(debug.bp)
+app.register_blueprint(openurl.bp)
 
 flask_env = os.getenv('FLASK_ENV')
 
