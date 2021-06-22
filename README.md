@@ -34,3 +34,7 @@
 `SP_KEY` = obtained from self signed key generated for this app
 
 `URN_UID` = the key in the SAML response to pull the kerberos ID
+
+## Required ENV
+
+`SENTRY_DSN` = if set to a valid Sentry DSN, enables Sentry exception monitoring
