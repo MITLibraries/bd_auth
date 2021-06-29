@@ -9,6 +9,7 @@ gunicorn = "*"
 python3-saml = "*"
 pycryptodome = "*"
 sentry-sdk = {extras = ["flask"], version = "*"}
+flask-talisman = "*"
 
 [dev-packages]
 python-dotenv = "*"
