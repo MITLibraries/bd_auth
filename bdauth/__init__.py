@@ -5,6 +5,15 @@ from flask import Flask
 
 from bdauth import auth, debug, openurl
 
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+
+if os.getenv('SENTRY_DSN'):
+    sentry_sdk.init(
+        dsn=os.getenv('SENTRY_DSN'),
+        integrations=[FlaskIntegration()],
+    )
+
 app = Flask(__name__, instance_relative_config=True)
 app.register_blueprint(auth.bp)
 app.register_blueprint(debug.bp)
@@ -31,3 +40,8 @@ def root():
 @app.route('/ping')
 def ping():
     return 'pong'
+
+
+@app.route('/debug-sentry')
+def trigger_error():
+    division_by_zero = 1 / 0

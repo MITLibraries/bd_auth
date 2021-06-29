@@ -12,6 +12,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      - name: apt update
+        run: sudo apt update
       - name: Install libxmlsec1
         run: sudo apt-get install -y libxmlsec1-dev
       - name: Install dependencies
