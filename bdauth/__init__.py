@@ -1,7 +1,8 @@
 import logging
 import os
 
-from flask import Flask
+from flask import Flask, redirect
+from flask_talisman import Talisman
 
 from bdauth import auth, debug, openurl
 
@@ -18,6 +19,7 @@ app = Flask(__name__, instance_relative_config=True)
 app.register_blueprint(auth.bp)
 app.register_blueprint(debug.bp)
 app.register_blueprint(openurl.bp)
+Talisman(app)
 
 flask_env = os.getenv('FLASK_ENV')
 
@@ -34,7 +36,7 @@ logging.basicConfig(level=logging.INFO)
 
 @app.route('/')
 def root():
-    return 'Hallo!'
+    return redirect('https://libraries.mit.edu/borrow/borrowdirect/', 307)
 
 
 @app.route('/ping')

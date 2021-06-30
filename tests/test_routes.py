@@ -18,4 +18,6 @@ def test_ping(client):
 
 def test_root(client):
     res = client.get('/')
-    assert res.status_code == 200
+    assert res.status_code == 307
+    expected = 'https://libraries.mit.edu/borrow/borrowdirect/'
+    assert res.headers['location'] == expected
